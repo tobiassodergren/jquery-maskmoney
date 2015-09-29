@@ -28,12 +28,8 @@
 
         mask : function (value) {
             return this.each(function () {
-                var $this = $(this),
-                    decimalSize;
+                var $this = $(this);
                 if (typeof value === "number") {
-                    $this.trigger("mask");
-                    decimalSize = $($this.val().split(/\D/)).last()[0].length;
-                    value = value.toFixed(decimalSize);
                     $this.val(value);
                 }
                 return $this.trigger("mask");
@@ -46,6 +42,9 @@
                     isNegative = value.indexOf("-") !== -1,
                     decimalPart;
                 // get the last position of the array that is a number(coercion makes "" to be evaluated as false)
+                value = value.replace(new RegExp(/\s+/g), "");
+                value = value.replace("SEK", "");
+                value += ".00";
                 $(value.split(/\D/).reverse()).each(function (index, element) {
                     if(element) {
                         decimalPart = element;
@@ -61,8 +60,8 @@
             });
         },
 
-        init : function (settings) {
-            settings = $.extend({
+        init : function (parameters) {
+            parameters = $.extend({
                 prefix: "",
                 suffix: "",
                 affixesStay: true,
@@ -71,13 +70,14 @@
                 precision: 2,
                 allowZero: false,
                 allowNegative: false
-            }, settings);
+            }, parameters);
 
             return this.each(function () {
-                var $input = $(this),
+                var $input = $(this), settings,
                     onFocusValue;
 
                 // data-* api
+                settings = $.extend({}, parameters);
                 settings = $.extend(settings, $input.data());
 
                 function getInputSelection() {
@@ -191,6 +191,7 @@
                     return setSymbol(newValue);
                 }
 
+
                 function maskAndPosition(startPos) {
                     var originalLen = $input.val().length,
                         newLen;
@@ -202,6 +203,9 @@
 
                 function mask() {
                     var value = $input.val();
+                    if (settings.precision > 0 && value.indexOf(settings.decimal) < 0) {
+                        value += settings.decimal + new Array(settings.precision+1).join(0);
+                    }
                     $input.val(maskValue(value));
                 }
 

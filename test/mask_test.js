@@ -59,3 +59,12 @@ test("with a suffix", function() {
     input.maskMoney("mask", 20316.22);
     equal(input.val(), "20,316.22 €");
 });
+
+test("With precision 0", function() {
+    var input = $("#input5").maskMoney();
+    input.val("1000");
+    input.maskMoney("mask");
+    equal(input.val(), "1 000 SEK", "Handles 0 precision");
+    var unmasked = input.maskMoney("unmasked")[0];
+    equal(unmasked, 1000, "Handles unmasking");
+});

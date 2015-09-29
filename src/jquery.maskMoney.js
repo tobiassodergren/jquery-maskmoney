@@ -34,6 +34,9 @@
                     isNegative = value.indexOf("-") !== -1,
                     decimalPart;
                 // get the last position of the array that is a number(coercion makes "" to be evaluated as false)
+                value = value.replace(new RegExp(/\s+/g), "");
+                value = value.replace("SEK", "");
+                value += ".00";
                 $(value.split(/\D/).reverse()).each(function (index, element) {
                     if(element) {
                         decimalPart = element;
